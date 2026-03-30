@@ -2,13 +2,6 @@
 
 ScentVault Backend is a robust API built with the Laravel framework, designed to manage perfume-related data including brands, scent notes, and usage occasions.
 
-## Core Features
-
-- **Brand Management**: Full CRUD operations for perfume brands.
-- **Note Management**: Manage various fragrance notes and compositions.
-- **Occasion Management**: Organize perfumes based on specific moments or events.
-- **Automatic API Documentation**: Real-time OpenAPI documentation generation using Scramble.
-
 ## Technology Stack
 
 - **PHP**: ^8.3
