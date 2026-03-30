@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class BrandController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a brand list.
      */
     public function index()
     {
@@ -20,7 +20,7 @@ class BrandController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a new brand.
      */
     public function store(Request $request)
     {
@@ -40,7 +40,7 @@ class BrandController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified brand.
      */
     public function show(string $id)
     {
@@ -61,7 +61,7 @@ class BrandController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified brand.
      */
     public function update(Request $request, string $id)
     {
@@ -82,7 +82,7 @@ class BrandController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified brand.
      */
     public function destroy(string $id)
     {
