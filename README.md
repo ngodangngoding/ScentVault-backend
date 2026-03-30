@@ -1,58 +1,72 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# ScentVault Backend API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+ScentVault Backend is a robust API built with the Laravel framework, designed to manage perfume-related data including brands, scent notes, and usage occasions.
 
-## About Laravel
+## Core Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **Brand Management**: Full CRUD operations for perfume brands.
+- **Note Management**: Manage various fragrance notes and compositions.
+- **Occasion Management**: Organize perfumes based on specific moments or events.
+- **Automatic API Documentation**: Real-time OpenAPI documentation generation using Scramble.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Technology Stack
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **PHP**: ^8.3
+- **Framework**: Laravel 13
+- **Database**: SQLite (default) / MySQL
+- **Documentation**: Dedoc Scramble
 
-## Learning Laravel
+## Installation & Setup
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Follow these steps to get the project running on your local machine:
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+1. **Clone the Repository**
+   ```bash
+   git clone <repository-url>
+   cd ScentVault-backend
+   ```
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+2. **Run the Setup Script**
+   For convenience, a setup script has been provided in the project configuration. Run:
+   ```bash
+   composer setup
+   ```
+   *This command will automatically install dependencies, copy the `.env` file, generate an application key, and run database migrations.*
 
-## Agentic Development
+   **Manual alternative:**
+   ```bash
+   composer install
+   cp .env.example .env
+   php artisan key:generate
+   php artisan migrate
+   ```
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+3. **Start the Development Server**
+   ```bash
+   php artisan serve
+   ```
+   The application will be accessible at `http://127.0.0.1:8000`.
 
-```bash
-composer require laravel/boost --dev
+## Accessing API Documentation
 
-php artisan boost:install
-```
+This project uses **Scramble** for interactive API documentation (similar to Swagger/Redoc). You don't need to manually write JSON/YAML documentation files; they are generated automatically from your code.
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+To explore all endpoints, required parameters, and test the API live:
 
-## Contributing
+1. Start the server using `php artisan serve`.
+2. Open your browser and navigate to:
+   **[http://127.0.0.1:8000/docs/api](http://127.0.0.1:8000/docs/api)**
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+In the documentation interface, you can see details for each resource:
+- `GET /api/brands` - List all brands
+- `POST /api/brands` - Create a new brand
+- `GET /api/notes` - List all fragrance notes
+- `POST /api/notes` - Create a new fragrance note
+- `GET /api/occasions` - List all occasions
+- `POST /api/occasions` - Create a new occasion
+- ... and other detail/update/delete endpoints.
 
-## Code of Conduct
+## API Structure
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+All API routes are defined in `routes/api.php` and use the `/api` prefix. When making requests from external tools like Postman or a frontend application, use the following URL format:
+`http://127.0.0.1:8000/api/{resource}`
