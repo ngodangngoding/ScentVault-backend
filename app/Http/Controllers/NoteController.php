@@ -83,7 +83,7 @@ class NoteController extends Controller
     }
 
     /**
-     * Remove the specified brand.
+     * Remove the specified notes.
      */
     public function destroy(string $id)
     {
