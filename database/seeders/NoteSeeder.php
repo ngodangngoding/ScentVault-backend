@@ -16,17 +16,27 @@ class NoteSeeder extends Seeder
     {
         DB::table('notes')->insert([
             [
-                'name' => 'Top',
+                'name' => 'Bergamot',
                 'created_at' => now(),
                 'updated_at' => now()
             ],
             [
-                'name' => 'Middle',
+                'name' => 'Bigarade',
                 'created_at' => now(),
                 'updated_at' => now()
             ],
             [
-                'name' => 'Base',
+                'name' => 'Bitter Orange',
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
+            [
+                'name' => 'Apple',
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
+            [
+                'name' => 'Acacia',
                 'created_at' => now(),
                 'updated_at' => now()
             ]
