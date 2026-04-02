@@ -196,6 +196,10 @@ class PerfumeController extends Controller
             ], 404);
         }
 
+        if ($perfume->image) {
+            Storage::disk('public')->delete($perfume->image);
+        }
+
         $perfume->delete();
 
         return response()->json([
