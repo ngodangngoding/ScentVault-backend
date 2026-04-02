@@ -9,7 +9,7 @@ use Illuminate\Validation\Rule;
 class ScentLogController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of scentlog.
      */
     public function index()
     {
@@ -21,7 +21,7 @@ class ScentLogController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly scentlog.
      */
     public function store(Request $request)
     {
@@ -48,26 +48,73 @@ class ScentLogController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display scentlog.
      */
     public function show(string $id)
     {
-        //
+        $scentLog = ScentLog::find($id);
+
+        if (empty($scentLog)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Scentlog not found'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $scentLog
+        ], 200);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update scentlog.
      */
     public function update(Request $request, string $id)
     {
-        //
+        $validate = $request->validate([
+            'perfume_id' => 'required|exists:perfumes,id',
+            'user_id' => 'required|exists:users,id',
+            'occasion_id' => 'required|exists:occasions,id',
+            'environment' => ['required', Rule::in(ScentLog::ENVIRONMENT)],
+            'notes_review' => 'nullable|string',
+        ]);
+
+        $scentLog = ScentLog::find($id);
+
+        if (empty($scentLog)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'ScentLog not Found'
+            ]);
+        }
+
+        $scentLog->update([
+            'perfume_id' => $validate['perfume_id'],
+            'user_id' => $validate['user_id'],
+            'occasion_id' => $validate['occasion_id'],
+            'environment' => $validate['environment'],
+            'notes_review' => $validate['notes_review']
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'data' => $scentLog
+        ]);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the scentlog.
      */
     public function destroy(string $id)
     {
-        //
+        $scentLog = ScentLog::find($id);
+
+        $scentLog->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Perfume deleted successfully'
+        ], 200);
     }
 }
