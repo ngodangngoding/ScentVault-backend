@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Storage;
 #[Fillable(['brand_id', 'name', 'concentration', 'description', 'image', 'is_active', 'star_rating'])]
 class Perfume extends Model
 {
-
     public const CONCENTRATION = [
         'extrait de parfum',
         'eau de parfum',

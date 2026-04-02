@@ -10,6 +10,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 #[Fillable(['perfume_id', 'user_id', 'occasion_id', 'environment', 'notes_review'])]
 class ScentLog extends Model
 {
+    public const ENVIRONMENT = [
+        'indoor',
+        'outdoor',
+        'all around'
+    ];
+
     public function perfumes(): HasMany
     {
         return $this->hasMany(Perfume::class);

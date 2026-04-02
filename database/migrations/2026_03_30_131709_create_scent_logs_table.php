@@ -12,11 +12,11 @@ return new class extends Migration {
     {
         Schema::create('scent_logs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('perfume_id');
-            $table->foreignId('user_id');
-            $table->foreignId('occasion_id');
+            $table->foreignId('perfume_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('occasion_id')->constrained()->cascadeOnUpdate();
             $table->enum('environment', ['indoor', 'outdoor', 'all around']);
-            $table->string('notes_review');
+            $table->text('notes_review')->nullable();
             $table->timestamps();
         });
     }
