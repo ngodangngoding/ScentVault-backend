@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Storage;
 
-#[Fillable(['brand_id', 'name', 'concentration', 'description', 'image', 'is_active', 'star_rating'])]
+#[Fillable(['brand_id', 'name', 'concentration', 'description', 'image'])]
 class Perfume extends Model
 {
     public const CONCENTRATION = [
@@ -29,7 +29,6 @@ class Perfume extends Model
     }
 
     protected $appends = ['image_url'];
-
     public function getImageUrlAttribute()
     {
         if ($this->image) {
@@ -48,13 +47,19 @@ class Perfume extends Model
         return $this->hasOne(PerfumeSuitability::class);
     }
 
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'user_perfumes', 'perfume_id', 'user_id')
+            ->withPivot('is_active', 'star_rating')
+            ->withTimestamps();
+    }
+
     public function perfumeNote(): BelongsToMany
     {
         return $this->belongsToMany(Note::class, 'perfume_notes', 'perfume_id', 'notes_id')
             ->withPivot('type')
             ->withTimestamps();
     }
-
 }
 
 
