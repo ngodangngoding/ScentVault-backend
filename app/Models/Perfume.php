@@ -10,6 +10,14 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 #[Fillable(['brand_id', 'name', 'concentration', 'description', 'image', 'is_active', 'star_rating'])]
 class Perfume extends Model
 {
+
+    public const CONCENTRATION = [
+        'extrait de parfum',
+        'eau de parfum',
+        'eau de toilette',
+        'eau de cologne'
+    ];
+
     public function brand(): BelongsTo
     {
         return $this->belongsTo(Brand::class);

@@ -15,8 +15,9 @@ return new class extends Migration {
             $table->foreignId('brand_id');
             $table->string('name');
             $table->enum('concentration', ['extrait de parfum', 'eau de parfum', 'eau de toilette', 'eau de cologne']);
+            $table->text('description')->nullable();
             $table->string('image')->nullable();
-            $table->boolean('is_active');
+            $table->boolean('is_active')->default(false);
             $table->integer('star_rating');
             $table->timestamps();
         });
