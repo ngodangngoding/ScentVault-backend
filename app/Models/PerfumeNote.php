@@ -15,8 +15,8 @@ class PerfumeNote extends Model
         return $this->belongsTo(Note::class);
     }
 
-    public function perfumes(): HasMany
+    public function perfumes(): BelongsTo
     {
-        return $this->hasMany(Perfume::class);
+        return $this->belongsTo(Perfume::class);
     }
 }

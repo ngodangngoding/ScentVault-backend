@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 #[Fillable(['brand_id', 'name', 'concentration', 'description', 'image', 'is_active', 'star_rating'])]
@@ -28,9 +29,9 @@ class Perfume extends Model
         return $this->hasOne(PerfumeSuitability::class);
     }
 
-    public function note(): BelongsTo
+    public function perfumeNote(): HasMany
     {
-        return $this->belongsTo(PerfumeNote::class);
+        return $this->hasMany(PerfumeNote::class);
     }
 
 }
