@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PerfumeResource;
 use App\Models\Perfume;
+use DB;
+use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class PerfumeController extends Controller
@@ -17,7 +21,7 @@ class PerfumeController extends Controller
         $perfume = Perfume::latest()->get();
         return response()->json([
             'success' => true,
-            'data' => $perfume
+            'data' => PerfumeResource::collection($perfume)
         ], 200);
     }
 
@@ -33,32 +37,62 @@ class PerfumeController extends Controller
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'is_active' => 'boolean|nullable',
             'star_rating' => 'integer|nullable',
-            'brand_id' => 'required|exists:brands,id'
+            'brand_id' => 'required|exists:brands,id',
+            'notes' => 'required|array',
+            'notes.*.note_id' => 'required|exists:notes,id',
+            'notes.*.type' => 'required|in:top,middle,base',
+
         ]);
 
         $photoPath = '';
-
         if ($request->hasFile('image')) {
             $photo = $request->file('image');
             $path = $photo->store('perfumes', 'public');
             $photoPath = $path;
         }
 
-        $perfume = Perfume::create([
-            'name' => $validate['name'],
-            'concentration' => $validate['concentration'],
-            'description' => $validate['description'],
-            'image' => $photoPath,
-            'is_active' => $validate['is_active'],
-            'star_rating' => $validate['star_rating'],
-            'brand_id' => $validate['brand_id']
-        ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Perfume successfully created',
-            'data' => $perfume
-        ], 200);
+        DB::beginTransaction();
+
+        try {
+            $perfume = Perfume::create([
+                'name' => $validate['name'],
+                'concentration' => $validate['concentration'],
+                'description' => $validate['description'],
+                'image' => $photoPath,
+                'is_active' => $validate['is_active'],
+                'star_rating' => $validate['star_rating'],
+                'brand_id' => $validate['brand_id']
+            ]);
+
+            $notesData = [];
+            foreach ($validate['notes'] as $note) {
+                $notesData[$note['note_id']] = ['type' => $note['type']];
+            }
+
+            $perfume->perfumeNote()->sync($notesData);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Perfume successfully created',
+                'data' => new PerfumeResource($perfume->load('perfumeNote'))
+            ], 200);
+
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            if ($photoPath && Storage::disk('public')->exists($photoPath)) {
+                Storage::disk('public')->delete($photoPath);
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to create Perfume',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -77,7 +111,7 @@ class PerfumeController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Detail of ' . $perfume->name,
-            'data' => $perfume
+            'data' => new PerfumeResource($perfume->load('perfumeNote'))
         ], 200);
     }
 
@@ -93,19 +127,26 @@ class PerfumeController extends Controller
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             'is_active' => 'boolean|nullable',
             'star_rating' => 'integer|nullable',
-            'brand_id' => 'required|exists:brands,id'
+            'brand_id' => 'required|exists:brands,id',
+            'notes' => 'required|array',
+            'notes.*.note_id' => 'required|exists:notes,id',
+            'notes.*.type' => 'required|in:top,middle,base',
         ]);
 
-        $photoPath = '';
+        $perfume = Perfume::findOrFail($id);
+        $photoPath = $perfume->image;
 
         if ($request->hasFile('image')) {
+            if ($perfume->image && Storage::disk('public')->exists($perfume->image)) {
+                Storage::disk('public')->delete($perfume->image);
+            }
             $photo = $request->file('image');
-            $path = $photo->store('perfumes', 'public');
-            $photoPath = $path;
+            $photoPath = $photo->store('perfumes', 'public');
         }
 
+        DB::beginTransaction();
+
         try {
-            $perfume = Perfume::findOrFail($id);
             $perfume->update([
                 'name' => $validate['name'],
                 'concentration' => $validate['concentration'],
@@ -116,18 +157,29 @@ class PerfumeController extends Controller
                 'brand_id' => $validate['brand_id']
             ]);
 
+            $notesData = [];
+            foreach ($validate['notes'] as $note) {
+                $notesData[$note['note_id']] = ['type' => $note['type']];
+            }
+            $perfume->perfumeNote()->sync($notesData);
+
+            DB::commit();
+
             return response()->json([
                 'success' => true,
-                'message' => 'Perfume successfully created',
-                'data' => $perfume
+                'message' => 'Perfume successfully updated',
+                'data' => new PerfumeResource($perfume->load('perfumeNote'))
             ], 200);
-        } catch (ModelNotFoundException $e) {
+
+        } catch (Exception $e) {
+            DB::rollBack();
+
             return response()->json([
                 'success' => false,
-                'message' => 'Perfume not found'
-            ], 404);
+                'message' => 'Failed to update Perfume',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
     }
 
     /**
