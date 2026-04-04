@@ -4,10 +4,8 @@ use App\Http\Controllers\BrandController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\OccasionController;
 use App\Http\Controllers\PerfumeController;
-use App\Http\Controllers\RecommendationController;
 use App\Http\Controllers\RegionController;
 use App\Http\Controllers\ScentLogController;
-use App\Http\Controllers\WeatherController;
 use Illuminate\Support\Facades\Route;
 
 Route::apiResource('brands', BrandController::class);
