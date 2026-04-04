@@ -13,7 +13,11 @@ class ScentLogController extends Controller
      */
     public function index()
     {
-        $scentLogs = ScentLog::latest()->get();
+        $scentLogs = ScentLog::with(['perfume', 'occasion'])
+            ->where('user_id', auth()->id())
+            ->latest()
+            ->get();
+
         return response()->json([
             'success' => true,
             'data' => $scentLogs
@@ -27,7 +31,6 @@ class ScentLogController extends Controller
     {
         $validate = $request->validate([
             'perfume_id' => 'required|exists:perfumes,id',
-            'user_id' => 'required|exists:users,id',
             'occasion_id' => 'required|exists:occasions,id',
             'environment' => ['required', Rule::in(ScentLog::ENVIRONMENT)],
             'notes_review' => 'nullable|string',
@@ -35,7 +38,7 @@ class ScentLogController extends Controller
 
         $scentLog = ScentLog::create([
             'perfume_id' => $validate['perfume_id'],
-            'user_id' => $validate['user_id'],
+            'user_id' => auth()->id(),
             'occasion_id' => $validate['occasion_id'],
             'environment' => $validate['environment'],
             'notes_review' => $validate['notes_review']
@@ -43,8 +46,8 @@ class ScentLogController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $scentLog
-        ], 200);
+            'data' => $scentLog->load(['perfume', 'occasion'])
+        ], 201);
     }
 
     /**
@@ -52,12 +55,14 @@ class ScentLogController extends Controller
      */
     public function show(string $id)
     {
-        $scentLog = ScentLog::find($id);
+        $scentLog = ScentLog::with(['perfume', 'occasion'])
+            ->where('user_id', auth()->id())
+            ->find($id);
 
         if (empty($scentLog)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Scentlog not found'
+                'message' => 'Scent log not found'
             ], 404);
         }
 
@@ -74,24 +79,23 @@ class ScentLogController extends Controller
     {
         $validate = $request->validate([
             'perfume_id' => 'required|exists:perfumes,id',
-            'user_id' => 'required|exists:users,id',
             'occasion_id' => 'required|exists:occasions,id',
             'environment' => ['required', Rule::in(ScentLog::ENVIRONMENT)],
             'notes_review' => 'nullable|string',
         ]);
 
-        $scentLog = ScentLog::find($id);
+        $scentLog = ScentLog::where('user_id', auth()->id())->find($id);
 
         if (empty($scentLog)) {
             return response()->json([
                 'success' => false,
                 'message' => 'ScentLog not Found'
-            ]);
+            ], 404);
         }
 
         $scentLog->update([
             'perfume_id' => $validate['perfume_id'],
-            'user_id' => $validate['user_id'],
+            'user_id' => auth()->id(),
             'occasion_id' => $validate['occasion_id'],
             'environment' => $validate['environment'],
             'notes_review' => $validate['notes_review']
@@ -99,8 +103,8 @@ class ScentLogController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $scentLog
-        ]);
+            'data' => $scentLog->load(['perfume', 'occasion'])
+        ], 200);
     }
 
     /**
@@ -108,13 +112,20 @@ class ScentLogController extends Controller
      */
     public function destroy(string $id)
     {
-        $scentLog = ScentLog::find($id);
+        $scentLog = ScentLog::where('user_id', auth()->id())->find($id);
+
+        if (empty($scentLog)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Scent log not found'
+            ], 404);
+        }
 
         $scentLog->delete();
 
         return response()->json([
             'success' => true,
-            'message' => 'Perfume deleted successfully'
+            'message' => 'Scent log deleted successfully'
         ], 200);
     }
 }
