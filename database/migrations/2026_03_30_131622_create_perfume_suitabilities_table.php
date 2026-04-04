@@ -13,7 +13,6 @@ return new class extends Migration {
         Schema::create('perfume_suitabilities', function (Blueprint $table) {
             $table->id();
             $table->foreignId('perfume_id');
-            $table->foreignId('weather_id');
             $table->enum('ideal_time', ['pagi', 'siang', 'malam']);
             $table->enum('ideal_environment', ['indoor', 'outdoor', 'all around']);
             $table->timestamps();
