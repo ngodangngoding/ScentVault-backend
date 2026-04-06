@@ -14,6 +14,17 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory()->create();
+        // Admin user
+        User::updateOrCreate(
+            ['email' => 'admin@scentvault.com'],
+            [
+                'name' => 'Administrator',
+                'password' => bcrypt('password'), // Silakan ganti nanti
+                'role' => 'admin',
+            ]
+        );
+
+        // Regular users
+        User::factory(10)->create(['role' => 'user']);
     }
 }

@@ -19,7 +19,8 @@ class AuthController extends Controller
         $user = User::create([
             'name' => $fields['name'],
             'email' => $fields['email'],
-            'password' => bcrypt($fields['password'])
+            'password' => bcrypt($fields['password']),
+            'role' => 'user'
         ]);
 
         $token = $user->createToken('myapptoken')->plainTextToken;
@@ -44,5 +45,14 @@ class AuthController extends Controller
             'user' => $user,
             'token' => $token
         ], 200);
+    }
+
+    public function logout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+
+        return response([
+            'message' => 'Logged out successfully'
+        ]);
     }
 }
