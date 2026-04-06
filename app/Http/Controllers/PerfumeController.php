@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\PerfumeResource;
 use App\Http\Resources\UserPerfumeResource;
 use App\Models\Perfume;
-use DB;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+
+
 
 class PerfumeController extends Controller
 {
@@ -18,8 +19,10 @@ class PerfumeController extends Controller
      */
     public function index()
     {
+
         $user = auth()->user();
-        $perfumes = $user->perfumes()->with(['brand', 'perfumeNote'])->latest()->get();
+        $perfumes = $user->perfumes()->with(['brand', 'perfumeNote', 'suitability'])->latest()->get();
+
         return response()->json([
             'success' => true,
             'data' => UserPerfumeResource::collection($perfumes)
@@ -77,16 +80,21 @@ class PerfumeController extends Controller
                 'star_rating' => $validate['star_rating'] ?? 0
             ]);
 
+            $perfume->suitability()->create([
+                'ideal_temperature' => 'normal',
+                'ideal_time' => 'siang',
+                'ideal_environment' => 'indoor'
+            ]);
+
             DB::commit();
 
-            $perfumeWithPivot = auth()->user()->perfumes()->with(['brand', 'perfumeNote'])->find($perfume->id);
+            $perfumeWithPivot = auth()->user()->perfumes()->with(['brand', 'perfumeNote', 'suitability'])->find($perfume->id);
 
             return response()->json([
                 'success' => true,
                 'message' => 'Perfume successfully created',
                 'data' => new UserPerfumeResource($perfumeWithPivot)
             ], 201);
-
         } catch (Exception $e) {
             DB::rollBack();
 
@@ -107,7 +115,7 @@ class PerfumeController extends Controller
      */
     public function show(string $id)
     {
-        $perfume = auth()->user()->perfumes()->with(['brand', 'perfumeNote'])->find($id);
+        $perfume = auth()->user()->perfumes()->with(['brand', 'perfumeNote', 'suitability'])->find($id);
 
         if (empty($perfume)) {
             return response()->json([
@@ -139,8 +147,6 @@ class PerfumeController extends Controller
             'notes' => 'required|array',
             'notes.*.note_id' => 'required|exists:notes,id',
             'notes.*.type' => 'required|in:top,middle,base',
-            'is_active' => 'boolean|nullable',
-            'star_rating' => 'integer|nullable',
         ]);
 
         $perfume = auth()->user()->perfumes()->find($id);
@@ -186,14 +192,13 @@ class PerfumeController extends Controller
 
             DB::commit();
 
-            $perfumeWithPivot = auth()->user()->perfumes()->with(['brand', 'perfumeNote'])->find($perfume->id);
+            $perfumeWithPivot = auth()->user()->perfumes()->with(['brand', 'perfumeNote', 'suitability'])->find($perfume->id);
 
             return response()->json([
                 'success' => true,
                 'message' => 'Perfume successfully updated',
                 'data' => new userPerfumeResource($perfumeWithPivot)
             ], 200);
-
         } catch (Exception $e) {
             DB::rollBack();
 

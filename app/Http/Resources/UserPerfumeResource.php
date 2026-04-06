@@ -24,6 +24,7 @@ class UserPerfumeResource extends JsonResource
             'is_active' => $this->pivot->is_active,
             'star_rating' => $this->pivot->star_rating,
             'notes' => PerfumeNoteResource::collection($this->whenLoaded('perfumeNote')),
+            'suitability' => new PerfumeSuitabilityResource($this->whenLoaded('suitability')),
             'created_at' => $this->pivot->created_at ?? $this->created_at,
             'deleted_at' => $this->pivot->deleted_at ?? $this->deleted_at
         ];
