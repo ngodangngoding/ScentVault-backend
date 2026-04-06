@@ -17,7 +17,8 @@ class DatabaseSeeder extends Seeder
             BrandSeeder::class,
             NoteSeeder::class,
             OccasionSeeder::class,
-            UserSeeder::class
+            UserSeeder::class,
+            RuleConfigSeeder::class,
         ]);
 
     }
