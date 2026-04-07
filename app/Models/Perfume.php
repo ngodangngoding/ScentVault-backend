@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\Storage;
 
-#[Fillable(['brand_id', 'name', 'concentration', 'description', 'image'])]
+#[Fillable(['brand_id', 'category_id', 'name', 'concentration', 'description', 'image'])]
 class Perfume extends Model
 {
     public const CONCENTRATION = [
@@ -24,7 +24,7 @@ class Perfume extends Model
     {
         return [
             'brand_id' => 'integer',
-            'is_active' => 'boolean',
+            'category_id' => 'integer',
             'star_rating' => 'integer'
         ];
     }
@@ -43,6 +43,11 @@ class Perfume extends Model
         return $this->belongsTo(Brand::class);
     }
 
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
+    }
+
     public function suitability(): HasOne
     {
         return $this->hasOne(PerfumeSuitability::class, 'perfume_id', 'id');
@@ -56,7 +61,7 @@ class Perfume extends Model
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'user_perfumes', 'perfume_id', 'user_id')
-            ->withPivot('is_active', 'star_rating')
+            ->withPivot('star_rating')
             ->withTimestamps();
     }
 

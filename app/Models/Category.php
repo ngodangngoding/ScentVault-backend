@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['name'])]
-class Note extends Model
+class Category extends Model
 {
-    public function perfumeNotes(): HasMany
+    public function perfumes(): HasMany
     {
-        return $this->hasMany(PerfumeNote::class, 'notes_id');
+        return $this->hasMany(Perfume::class);
     }
 }

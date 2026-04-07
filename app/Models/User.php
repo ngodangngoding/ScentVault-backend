@@ -51,7 +51,7 @@ class User extends Authenticatable
     public function perfumes(): BelongsToMany
     {
         return $this->belongsToMany(Perfume::class, 'user_perfumes', 'user_id', 'perfume_id')
-            ->withPivot('is_active', 'star_rating')
+            ->withPivot('star_rating')
             ->withTimestamps();
     }
 }

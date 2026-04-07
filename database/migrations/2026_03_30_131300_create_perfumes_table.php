@@ -13,6 +13,7 @@ return new class extends Migration {
         Schema::create('perfumes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('brand_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('category_id')->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->enum('concentration', ['extrait de parfum', 'eau de parfum', 'eau de toilette', 'eau de cologne']);
             $table->text('description')->nullable();

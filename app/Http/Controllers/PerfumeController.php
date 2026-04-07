@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\UserPerfumeResource;
+use App\Models\Brand;
+use App\Models\Note;
 use App\Models\Perfume;
 use Exception;
 use Illuminate\Http\Request;
@@ -21,7 +23,7 @@ class PerfumeController extends Controller
     {
 
         $user = auth()->user();
-        $perfumes = $user->perfumes()->with(['brand', 'perfumeNote', 'suitability'])->latest()->get();
+        $perfumes = $user->perfumes()->with(['brand', 'category', 'perfumeNote', 'suitability'])->latest()->get();
 
         return response()->json([
             'success' => true,
@@ -39,11 +41,11 @@ class PerfumeController extends Controller
             'concentration' => ['required', Rule::in(Perfume::CONCENTRATION)],
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'brand_id' => 'required|exists:brands,id',
+            'brand' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
             'notes' => 'required|array',
-            'notes.*.note_id' => 'required|exists:notes,id',
+            'notes.*.name' => 'required|string|max:255',
             'notes.*.type' => 'required|in:top,middle,base',
-            'is_active' => 'boolean|nullable',
             'star_rating' => 'integer|nullable',
         ]);
 
@@ -57,26 +59,31 @@ class PerfumeController extends Controller
         DB::beginTransaction();
 
         try {
+            $brandName = trim(ucwords(strtolower($validate['brand'])));
+            $brand = Brand::firstOrCreate(['name' => $brandName]);
+
             $perfume = Perfume::create([
                 'name' => $validate['name'],
                 'concentration' => $validate['concentration'],
                 'description' => $validate['description'],
                 'image' => $photoPath,
-                'is_active' => $validate['is_active'],
                 'star_rating' => $validate['star_rating'],
-                'brand_id' => $validate['brand_id']
+                'brand_id' => $brand->id,
+                'category_id' => $validate['category_id']
             ]);
 
-            // Pivot Perfumes <-> Notes
+            // Pivot Perfumes <-> Notes (auto-create note jika belum ada)
             $notesData = [];
-            foreach ($validate['notes'] as $note) {
-                $notesData[$note['note_id']] = ['type' => $note['type']];
+            foreach ($validate['notes'] as $noteInput) {
+                $note = Note::firstOrCreate(
+                    ['name' => strtolower(trim($noteInput['name']))]
+                );
+                $notesData[$note->id] = ['type' => $noteInput['type']];
             }
             $perfume->perfumeNote()->sync($notesData);
 
             // Pivot User <-> Perfume
             auth()->user()->perfumes()->attach($perfume->id, [
-                'is_active' => $validate['is_active'] ?? false,
                 'star_rating' => $validate['star_rating'] ?? 0
             ]);
 
@@ -88,7 +95,7 @@ class PerfumeController extends Controller
 
             DB::commit();
 
-            $perfumeWithPivot = auth()->user()->perfumes()->with(['brand', 'perfumeNote', 'suitability'])->find($perfume->id);
+            $perfumeWithPivot = auth()->user()->perfumes()->with(['brand', 'category', 'perfumeNote', 'suitability'])->find($perfume->id);
 
             return response()->json([
                 'success' => true,
@@ -115,7 +122,7 @@ class PerfumeController extends Controller
      */
     public function show(string $id)
     {
-        $perfume = auth()->user()->perfumes()->with(['brand', 'perfumeNote', 'suitability'])->find($id);
+        $perfume = auth()->user()->perfumes()->with(['brand', 'category', 'perfumeNote', 'suitability'])->find($id);
 
         if (empty($perfume)) {
             return response()->json([
@@ -141,11 +148,11 @@ class PerfumeController extends Controller
             'concentration' => ['required', Rule::in(Perfume::CONCENTRATION)],
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'is_active' => 'boolean|nullable',
             'star_rating' => 'integer|nullable',
-            'brand_id' => 'required|exists:brands,id',
+            'brand' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
             'notes' => 'required|array',
-            'notes.*.note_id' => 'required|exists:notes,id',
+            'notes.*.name' => 'required|string|max:255',
             'notes.*.type' => 'required|in:top,middle,base',
         ]);
 
@@ -156,6 +163,9 @@ class PerfumeController extends Controller
                 'message' => 'Perfume Not Found'
             ], 404);
         }
+
+        $oldBrandId = $perfume->brand_id;
+        $oldNoteIds = $perfume->perfumeNote->pluck('id')->toArray();
 
         $photoPath = $perfume->image;
 
@@ -169,35 +179,61 @@ class PerfumeController extends Controller
         DB::beginTransaction();
 
         try {
+            $brandName = trim(ucwords(strtolower($validate['brand'])));
+            $brand = Brand::firstOrCreate(['name' => $brandName]);
+
             $perfume->update([
                 'name' => $validate['name'],
                 'concentration' => $validate['concentration'],
                 'description' => $validate['description'],
                 'image' => $photoPath,
-                'brand_id' => $validate['brand_id']
+                'brand_id' => $brand->id,
+                'category_id' => $validate['category_id']
             ]);
 
-            // Pivot: Perfume <-> Notes
+            // Pivot: Perfume <-> Notes (auto-create note jika belum ada)
             $notesData = [];
-            foreach ($validate['notes'] as $note) {
-                $notesData[$note['note_id']] = ['type' => $note['type']];
+            foreach ($validate['notes'] as $noteInput) {
+                $note = Note::firstOrCreate(
+                    ['name' => strtolower(trim($noteInput['name']))]
+                );
+                $notesData[$note->id] = ['type' => $noteInput['type']];
             }
             $perfume->perfumeNote()->sync($notesData);
 
             // Pivot: User <-> Perfume
             auth()->user()->perfumes()->updateExistingPivot($perfume->id, [
-                'is_active' => $validate['is_active'] ?? false,
                 'star_rating' => $validate['star_rating'] ?? 0
             ]);
 
+            // Cleanup orphaned old brand if no longer used
+            if ($oldBrandId != $brand->id) {
+                if (Brand::where('id', $oldBrandId)->doesntHave('perfumes')->exists()) {
+                    Brand::destroy($oldBrandId);
+                }
+            }
+
+            // Cleanup orphaned old notes
+            $newNoteIds = array_keys($notesData);
+            $potentiallyOrphanedNotes = array_diff($oldNoteIds, $newNoteIds);
+            if (!empty($potentiallyOrphanedNotes)) {
+                $trulyOrphaned = Note::whereIn('id', $potentiallyOrphanedNotes)
+                    ->doesntHave('perfumeNotes')
+                    ->pluck('id')
+                    ->toArray();
+                if (!empty($trulyOrphaned)) {
+                    Note::destroy($trulyOrphaned);
+                }
+            }
+
             DB::commit();
 
-            $perfumeWithPivot = auth()->user()->perfumes()->with(['brand', 'perfumeNote', 'suitability'])->find($perfume->id);
+            $perfumeWithPivot = auth()->user()->perfumes()->with(['brand', 'category', 'perfumeNote', 'suitability'])->find($perfume->id);
 
             return response()->json([
                 'success' => true,
                 'message' => 'Perfume successfully updated',
-                'data' => new userPerfumeResource($perfumeWithPivot)
+                'data' => new UserPerfumeResource($perfumeWithPivot)
             ], 200);
         } catch (Exception $e) {
             DB::rollBack();
@@ -224,16 +260,51 @@ class PerfumeController extends Controller
             ], 404);
         }
 
+        $brandId = $perfume->brand_id;
+        $noteIds = $perfume->perfumeNote->pluck('id')->toArray();
+
         if ($perfume->image) {
             Storage::disk('public')->delete($perfume->image);
         }
 
-        auth()->user()->perfumes()->detach($perfume->id);
-        $perfume->delete();
+        DB::beginTransaction();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Perfume deleted successfully'
-        ], 200);
+        try {
+            auth()->user()->perfumes()->detach($perfume->id);
+            $perfume->perfumeNote()->detach();
+            if ($perfume->suitability) {
+                $perfume->suitability()->delete();
+            }
+            $perfume->delete();
+
+            if (Brand::where('id', $brandId)->doesntHave('perfumes')->exists()) {
+                Brand::destroy($brandId);
+            }
+
+            if (!empty($noteIds)) {
+                $trulyOrphaned = Note::whereIn('id', $noteIds)
+                    ->doesntHave('perfumeNotes')
+                    ->pluck('id')
+                    ->toArray();
+                if (!empty($trulyOrphaned)) {
+                    Note::destroy($trulyOrphaned);
+                }
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Perfume deleted successfully'
+            ], 200);
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete Perfume',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

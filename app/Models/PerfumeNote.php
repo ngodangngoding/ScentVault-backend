@@ -12,7 +12,7 @@ class PerfumeNote extends Model
 {
     public function note(): BelongsTo
     {
-        return $this->belongsTo(Note::class);
+        return $this->belongsTo(Note::class, 'notes_id');
     }
 
     public function perfumes(): BelongsTo

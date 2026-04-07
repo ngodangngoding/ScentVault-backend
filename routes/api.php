@@ -1,6 +1,7 @@
 <?php
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BrandController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\OccasionController;
 use App\Http\Controllers\PerfumeController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\RuleConfigController;
 use Illuminate\Support\Facades\Route;
 
 Route::apiResource('brands', BrandController::class);
+Route::apiResource('categories', CategoryController::class);
 Route::apiResource('notes', NoteController::class);
 Route::apiResource('occasions', OccasionController::class);
 Route::post('/register', [AuthController::class, 'register']);

@@ -23,7 +23,7 @@ class AuthController extends Controller
             'role' => 'user'
         ]);
 
-        $token = $user->createToken('myapptoken')->plainTextToken;
+        $token = $user->createToken('auth_token')->plainTextToken;
         return response([
             'user' => $user,
             'token' => $token
@@ -36,11 +36,12 @@ class AuthController extends Controller
             'email' => 'required|string',
             'password' => 'required|string'
         ]);
+
         $user = User::where('email', $fields['email'])->first();
         if (!$user || !Hash::check($fields['password'], $user->password)) {
             return response(['message' => 'Bad credentials'], 401);
         }
-        $token = $user->createToken('myapptoken')->plainTextToken;
+        $token = $user->createToken('auth_token')->plainTextToken;
         return response([
             'user' => $user,
             'token' => $token
