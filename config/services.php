@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'bmkg' => [
+        'base_url' => env('BMKG_BASE_URL'),
+        'timeout' => (int) env('BMKG_TIMEOUT'),
+        'cache_minutes' => (int) env('BMKG_CACHE_MINUTES'),
+    ],
+
 ];

@@ -29,7 +29,7 @@ class PerfumeSuitabilityController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Suitability updated successfully',
+            'message' => 'Suitability show successfully',
             'data' => new PerfumeSuitabilityResource($suitability),
         ]);
     }

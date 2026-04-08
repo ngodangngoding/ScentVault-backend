@@ -6,6 +6,8 @@ use App\Http\Controllers\NoteController;
 use App\Http\Controllers\OccasionController;
 use App\Http\Controllers\PerfumeController;
 use App\Http\Controllers\PerfumeSuitabilityController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RecommendationController;
 use App\Http\Controllers\RegionController;
 use App\Http\Controllers\ScentLogController;
 use App\Http\Controllers\UserController;
@@ -24,8 +26,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('perfumes', PerfumeController::class);
     Route::put('/perfumes/{perfume}/suitability', [PerfumeSuitabilityController::class, 'update']);
     Route::get('perfumes/{perfume}/suitability', [PerfumeSuitabilityController::class, 'show']);
+    Route::get('/me', [ProfileController::class, 'show']);
+    Route::patch('/me/region', [ProfileController::class, 'updateRegion']);
     Route::apiResource('scentLog', ScentLogController::class);
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/recommendations/current', [RecommendationController::class, 'current']);
 });
 
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {

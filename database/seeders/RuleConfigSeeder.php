@@ -21,7 +21,6 @@ class RuleConfigSeeder extends Seeder
             // Time rules (jam, format 24h)
             ['type' => 'time', 'label' => 'pagi', 'min_value' => 5, 'max_value' => 11],
             ['type' => 'time', 'label' => 'siang', 'min_value' => 11, 'max_value' => 15],
-            ['type' => 'time', 'label' => 'sore', 'min_value' => 15, 'max_value' => 18],
             ['type' => 'time', 'label' => 'malam', 'min_value' => 18, 'max_value' => 5],
         ];
 
