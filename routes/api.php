@@ -2,6 +2,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\IntegrationStatusController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\OccasionController;
 use App\Http\Controllers\PerfumeController;
@@ -36,6 +37,7 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::apiResource('users', UserController::class);
     Route::apiResource('rule-configs', RuleConfigController::class);
+    Route::get('/integration-status', [IntegrationStatusController::class, 'index']);
 });
 
 Route::prefix('region')->group(function () {

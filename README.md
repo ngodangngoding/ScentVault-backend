@@ -1,65 +1,248 @@
 # ScentVault Backend API
 
-ScentVault Backend is a robust API built with the Laravel framework, designed to manage perfume-related data including brands, scent notes, and usage occasions.
+Backend API untuk aplikasi manajemen koleksi parfum, scent log, dan rekomendasi parfum berbasis kondisi cuaca serta lokasi user.
 
-## Technology Stack
+## Fitur Utama
 
-- **PHP**: ^8.3
-- **Framework**: Laravel 13
-- **Database**: SQLite (default) / MySQL
-- **Documentation**: Dedoc Scramble
+- Authentication API dengan Laravel Sanctum (`register`, `login`, `logout`)
+- Manajemen profil user dan update region user
+- Master data parfum: brand, category, notes, occasion
+- Manajemen koleksi parfum milik user
+- Upload gambar parfum ke storage publik
+- Pengaturan suitability parfum:
+  - ideal_temperature: `dingin|normal|panas`
+  - ideal_time: `pagi|siang|malam`
+  - ideal_environment: `indoor|outdoor|all around`
+- Scent log pemakaian parfum
+- Rekomendasi parfum berdasarkan:
+  - lokasi user
+  - prakiraan cuaca BMKG
+  - rule config suhu dan waktu
+  - rating parfum dari user
+- Manajemen user dan rule config untuk admin
+- Monitoring status integrasi BMKG dan master region
+- Dokumentasi API otomatis dengan Scramble
 
-## Installation & Setup
+## Tech Stack
 
-Follow these steps to get the project running on your local machine:
+- PHP `^8.3`
+- Laravel `^13`
+- Laravel Sanctum
+- MySQL
+- Vite
+- Scramble API Docs
 
-1. **Clone the Repository**
-   ```bash
-   git clone <repository-url>
-   cd ScentVault-backend
-   ```
+## Prasyarat
 
-2. **Run the Setup Script**
-   For convenience, a setup script has been provided in the project configuration. Run:
-   ```bash
-   composer setup
-   ```
-   *This command will automatically install dependencies, copy the `.env` file, generate an application key, and run database migrations.*
+Pastikan environment lokal sudah memiliki:
 
-   **Manual alternative:**
-   ```bash
-   composer install
-   cp .env.example .env
-   php artisan key:generate
-   php artisan migrate
-   ```
+- PHP 8.3+
+- Composer
+- Node.js 18+ dan npm
+- MySQL / MariaDB
+- Internet aktif untuk:
+  - sinkronisasi region dari `wilayah.id`
+  - request cuaca ke BMKG
 
-3. **Start the Development Server**
-   ```bash
-   php artisan serve
-   ```
-   The application will be accessible at `http://127.0.0.1:8000`.
+## Konfigurasi Environment
 
-## Accessing API Documentation
+Copy file env:
 
-This project uses **Scramble** for interactive API documentation (similar to Swagger/Redoc). You don't need to manually write JSON/YAML documentation files; they are generated automatically from your code.
+```bash
+cp .env.example .env
+```
 
-To explore all endpoints, required parameters, and test the API live:
+Atur minimal value berikut di `.env`:
 
-1. Start the server using `php artisan serve`.
-2. Open your browser and navigate to:
-   **[http://127.0.0.1:8000/docs/api](http://127.0.0.1:8000/docs/api)**
+```env
+APP_NAME="ScentVault Backend"
+APP_ENV=local
+APP_DEBUG=true
+APP_URL=http://127.0.0.1:8000
 
-In the documentation interface, you can see details for each resource:
-- `GET /api/brands` - List all brands
-- `POST /api/brands` - Create a new brand
-- `GET /api/notes` - List all fragrance notes
-- `POST /api/notes` - Create a new fragrance note
-- `GET /api/occasions` - List all occasions
-- `POST /api/occasions` - Create a new occasion
-- ... and other detail/update/delete endpoints.
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=scentvault_backend
+DB_USERNAME=root
+DB_PASSWORD=
 
-## API Structure
+SESSION_DRIVER=database
+CACHE_STORE=database
+QUEUE_CONNECTION=database
 
-All API routes are defined in `routes/api.php` and use the `/api` prefix. When making requests from external tools like Postman or a frontend application, use the following URL format:
-`http://127.0.0.1:8000/api/{resource}`
+BMKG_BASE_URL=https://api.bmkg.go.id/publik
+BMKG_TIMEOUT=10
+BMKG_CACHE_MINUTES=10
+```
+
+## Setup Lengkap dari Nol
+
+1. Clone repository
+
+```bash
+git clone <repository-url>
+cd ScentVault-backend
+```
+
+2. Install dependency backend
+
+```bash
+composer install
+```
+
+3. Install dependency frontend/build tools
+
+```bash
+npm install
+```
+
+4. Copy `.env` lalu sesuaikan konfigurasi database
+
+```bash
+cp .env.example .env
+```
+
+5. Buat database MySQL
+
+```sql
+CREATE DATABASE scentvault_backend;
+```
+
+6. Generate application key
+
+```bash
+php artisan key:generate
+```
+
+7. Jalankan migration dan seeder
+
+```bash
+php artisan migrate --seed
+```
+
+8. Buat symbolic link storage publik
+
+```bash
+php artisan storage:link
+```
+
+9. Sinkronkan master region Indonesia
+
+```bash
+php artisan app:sync-region
+```
+
+10. Jalankan server API
+
+```bash
+php artisan serve
+```
+
+11. Jika ingin mode development lengkap, jalankan:
+
+```bash
+composer dev
+```
+
+Perintah `composer dev` akan menjalankan:
+
+- Laravel dev server
+- queue listener
+- Vite dev server
+
+## Jalur Cepat
+
+Project ini punya script bawaan:
+
+```bash
+composer setup
+```
+
+Tetapi setelah itu kamu tetap disarankan menjalankan:
+
+```bash
+php artisan db:seed
+php artisan storage:link
+php artisan app:sync-region
+```
+
+Karena `composer setup` belum melakukan seed data, storage link, dan sync region.
+
+## Seed Data Default
+
+Seeder bawaan saat ini membuat:
+
+- 1 admin:
+  - email: `admin@scentvault.com`
+  - password: `password`
+- 10 user dummy dari factory
+- category default
+- occasion default
+- rule config default untuk temperature dan time
+
+Catatan: segera ganti password admin setelah setup.
+
+## Dokumentasi API
+
+Setelah server berjalan, buka:
+
+- UI docs: `http://127.0.0.1:8000/docs/api`
+- OpenAPI JSON: `http://127.0.0.1:8000/docs/api.json`
+
+## Ringkasan Endpoint
+
+### Public
+
+- `POST /api/register`
+- `POST /api/login`
+- `GET|POST|PUT|DELETE /api/brands`
+- `GET|POST|PUT|DELETE /api/categories`
+- `GET|POST|PUT|DELETE /api/notes`
+- `GET|POST|PUT|DELETE /api/occasions`
+- `GET /api/region/provinces`
+- `GET /api/region/regencies?province_code=...`
+- `GET /api/region/districts?regency_code=...`
+- `GET /api/region/villages?district_code=...`
+
+### Authenticated (`Authorization: Bearer <token>`)
+
+- `GET /api/me`
+- `PATCH /api/me/region`
+- `POST /api/logout`
+- `GET|POST|PUT|DELETE /api/perfumes`
+- `GET|PUT /api/perfumes/{id}/suitability`
+- `GET|POST|PUT|DELETE /api/scentLog`
+- `GET /api/recommendations/current`
+
+### Admin Only
+
+- `GET|POST|PUT|DELETE /api/users`
+- `GET|POST|PUT|DELETE /api/rule-configs`
+- `GET /api/integration-status`
+
+## Flow Rekomendasi
+
+Agar endpoint `GET /api/recommendations/current` bekerja dengan benar:
+
+1. User harus login
+2. User harus punya `region_code`
+3. Data `region` harus sudah di-sync
+4. User harus punya minimal 1 perfume
+5. Perfume harus punya data suitability
+6. Tabel `rule_configs` harus terisi
+7. Server harus bisa mengakses API BMKG
+
+## Upload Gambar
+
+Upload gambar parfum disimpan ke disk `public`, jadi endpoint image URL baru akan bekerja dengan benar jika sudah menjalankan:
+
+```bash
+php artisan storage:link
+```
+
+## Catatan Tambahan
+
+- Default database pada `.env.example` adalah MySQL, bukan SQLite
+- Session, cache, dan queue memakai driver database
+- Jika BMKG atau `wilayah.id` tidak bisa diakses, fitur rekomendasi dan sync region akan terganggu
