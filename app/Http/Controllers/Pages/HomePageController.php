@@ -7,8 +7,10 @@ use App\Http\Resources\HomePageResource;
 use App\Http\Resources\HomeScentLogResource;
 use App\Models\ScentLog;
 use App\Services\PerfumeRecommendationService;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Request;
 
+#[Group('User - Pages', 'Endpoint data halaman frontend yang membutuhkan login user.', 12)]
 class HomePageController extends Controller
 {
     public function __construct(

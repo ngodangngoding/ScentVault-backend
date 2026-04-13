@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\PerfumeSuitabilityResource;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Request;
 
+#[Group('User - Perfume Suitability', 'Endpoint untuk melihat dan mengubah suitability parfum user.', 5)]
 class PerfumeSuitabilityController extends Controller
 {
     public function show(string $id)

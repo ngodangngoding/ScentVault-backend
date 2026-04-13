@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\RuleConfigResource;
 use App\Models\RuleConfig;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Request;
 
+#[Group('Admin - Rule Configs', 'Endpoint khusus admin untuk mengatur rule config sistem rekomendasi.', 10)]
 class RuleConfigController extends Controller
 {
     /**

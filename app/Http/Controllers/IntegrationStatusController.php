@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\IntegrationStatusResource;
 use App\Models\Region;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Support\Facades\Http;
 
+#[Group('Admin - Integration Status', 'Endpoint khusus admin untuk memantau status integrasi layanan eksternal.', 11)]
 class IntegrationStatusController extends Controller
 {
     public function index()

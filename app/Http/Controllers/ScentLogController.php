@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\ScentLog;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
+#[Group('User - Scent Logs', 'Endpoint untuk mencatat dan melihat riwayat pemakaian parfum user.', 6)]
 class ScentLogController extends Controller
 {
     /**

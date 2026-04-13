@@ -1,4 +1,5 @@
 <?php
+
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\BrandController;
@@ -39,7 +40,7 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::prefix('admin')->middleware(['auth:sanctum', 'admin'])->group(function () {
-Route::apiResource('rule-configs', RuleConfigController::class);
+    Route::apiResource('rule-configs', RuleConfigController::class);
     Route::get('/integration-status', [IntegrationStatusController::class, 'index']);
 
     Route::get('/users', [AdminUserController::class, 'index']);

@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
+#[Group('User - Profile', 'Endpoint untuk melihat dan mengelola profil user yang sedang login.', 3)]
 class ProfileController extends Controller
 {
     public function show(Request $request)

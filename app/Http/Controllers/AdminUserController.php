@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
+#[Group('Admin - Users', 'Endpoint khusus admin untuk manajemen user.', 9)]
 class AdminUserController extends Controller
 {
     public function index(Request $request)

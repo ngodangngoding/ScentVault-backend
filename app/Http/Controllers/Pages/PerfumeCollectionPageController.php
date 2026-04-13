@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Pages;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PerfumeCollectionCategoryResource;
 use App\Models\Category;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 
+#[Group('User - Pages', 'Endpoint data halaman frontend yang membutuhkan login user.', 12)]
 class PerfumeCollectionPageController extends Controller
 {
     public function show(Request $request)

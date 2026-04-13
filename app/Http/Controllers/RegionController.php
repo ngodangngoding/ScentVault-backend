@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Region;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Request;
 
+#[Group('Public - Regions', 'Endpoint data wilayah yang bisa dipakai sebelum atau sesudah login.', 8)]
 class RegionController extends Controller
 {
     public function provinces()

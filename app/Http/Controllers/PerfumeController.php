@@ -6,14 +6,14 @@ use App\Http\Resources\UserPerfumeResource;
 use App\Models\Brand;
 use App\Models\Note;
 use App\Models\Perfume;
+use Dedoc\Scramble\Attributes\Group;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
-
-
+#[Group('User - Perfumes', 'Endpoint untuk mengelola koleksi parfum milik user.', 4)]
 class PerfumeController extends Controller
 {
     /**

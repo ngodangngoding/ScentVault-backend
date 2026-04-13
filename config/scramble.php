@@ -29,7 +29,79 @@ return [
         /*
          * Description rendered on the home page of the API documentation (`/docs/api`).
          */
-        'description' => 'Ini semua dokumentasi api untuk aplikasi scent vault',
+        'description' => <<<'MARKDOWN'
+## Overview
+
+Dokumentasi ini dipakai sebagai acuan integrasi frontend dengan backend **ScentVault**. 
+
+### Public API
+
+Bagian ini bisa diakses tanpa login dan biasanya dipakai untuk:
+- autentikasi awal seperti register dan login
+- mengambil master data yang dibutuhkan form atau filter
+- mengambil data wilayah
+
+### User API
+
+Bagian ini khusus untuk user yang sudah login menggunakan bearer token. Endpoint pada grup ini dipakai untuk:
+- melihat dan mengubah profile user
+- mengelola koleksi parfum pribadi
+- mengatur suitability parfum
+- membuat dan melihat scent log
+- mengambil rekomendasi parfum berdasarkan kondisi user dan cuaca
+- mengakses data halaman aplikasi yang bersifat personal
+
+Endpoint user:
+- `GET /api/me`
+- `PATCH /api/me`
+- `POST /api/me/avatar`
+- `PATCH /api/me/password`
+- `PATCH /api/me/region`
+- `POST /api/logout`
+- `GET /api/perfumes`
+- `POST /api/perfumes`
+- `GET /api/perfumes/{perfume}`
+- `PUT|PATCH /api/perfumes/{perfume}`
+- `DELETE /api/perfumes/{perfume}`
+- `GET /api/perfumes/{perfume}/suitability`
+- `PUT /api/perfumes/{perfume}/suitability`
+- `GET /api/scentLog`
+- `POST /api/scentLog`
+- `GET /api/scentLog/{scentLog}`
+- `PUT|PATCH /api/scentLog/{scentLog}`
+- `DELETE /api/scentLog/{scentLog}`
+- `GET /api/recommendations/current`
+- `GET /api/pages/home`
+- `GET /api/pages/perfume-collection`
+
+### Admin API
+
+Bagian ini hanya untuk akun admin. Endpoint admin dipakai untuk:
+- mengelola data user
+- mengelola rule config sistem rekomendasi
+- melihat status integrasi layanan eksternal
+
+Endpoint admin:
+- `GET /api/admin/users`
+- `POST /api/admin/users`
+- `GET /api/admin/users/{user}`
+- `PATCH /api/admin/users/{user}`
+- `DELETE /api/admin/users/{user}`
+- `PATCH /api/admin/users/{user}/role`
+- `GET /api/admin/rule-configs`
+- `POST /api/admin/rule-configs`
+- `GET /api/admin/rule-configs/{rule_config}`
+- `PUT|PATCH /api/admin/rule-configs/{rule_config}`
+- `DELETE /api/admin/rule-configs/{rule_config}`
+- `GET /api/admin/integration-status`
+
+### Catatan Integrasi Frontend
+
+- Gunakan endpoint **Public API** untuk flow sebelum login.
+- Gunakan endpoint **User API** setelah user berhasil login dan token disimpan di frontend.
+- Gunakan endpoint **Admin API** hanya untuk dashboard atau fitur manajemen admin.
+- Perhatikan kebutuhan autentikasi pada setiap endpoint sebelum dipanggil dari frontend.
+MARKDOWN,
     ],
 
     /*

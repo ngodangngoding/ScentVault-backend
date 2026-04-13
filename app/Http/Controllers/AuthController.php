@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Dedoc\Scramble\Attributes\Group;
 use Hash;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 class AuthController extends Controller
 {
+    #[Group('Public - Authentication', 'Endpoint autentikasi yang bisa diakses sebelum login.', 1)]
     public function register(Request $request)
     {
         $fields = $request->validate([
@@ -38,6 +40,7 @@ class AuthController extends Controller
         ], 201);
     }
 
+    #[Group('Public - Authentication', 'Endpoint autentikasi yang bisa diakses sebelum login.', 1)]
     public function login(Request $request)
     {
         $fields = $request->validate([
@@ -56,6 +59,7 @@ class AuthController extends Controller
         ], 200);
     }
 
+    #[Group('User - Authentication', 'Endpoint autentikasi untuk user yang sudah login.', 2)]
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();

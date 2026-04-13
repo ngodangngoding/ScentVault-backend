@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Services\PerfumeRecommendationService;
+use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Request;
 
+#[Group('User - Recommendations', 'Endpoint rekomendasi parfum untuk user yang sudah login.', 7)]
 class RecommendationController extends Controller
 {
     public function __construct(
