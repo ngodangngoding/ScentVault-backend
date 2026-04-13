@@ -2,19 +2,82 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
 {
     public function show(Request $request)
     {
-        return response()->json($request->user());
+        $user = $request->user()->load('region')->loadCount(['perfumes', 'scentLogs']);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Profile successfully fetched',
+            'data' => $user
+        ], 200);
+    }
+
+    public function update(Request $request)
+    {
+        $user = $request->user();
+
+        $validate = $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'email' => [
+                'sometimes',
+                'string',
+                'email',
+                'max:255',
+                Rule::unique('users', 'email')->ignore($user->id)
+            ]
+        ]);
+
+        $user->update($validate);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Profile successfully updated',
+            'data' => $this->profileData($user)
+        ], 200);
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $user = $request->user();
+
+        $validate = $request->validate([
+            'current_password' => 'required|string',
+            'password' => 'required|string|min:6|confirmed'
+        ]);
+
+        if (!Hash::check($validate['current_password'], $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Current password is incorrect',
+                'data' => null
+            ], 422);
+        }
+
+        $user->update([
+            'password' => $validate['password']
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Password successfully updated',
+            'data' => $this->profileData($user)
+        ], 200);
     }
 
     public function updateRegion(Request $request)
     {
-        $validated = $request->validate([
+        $user = $request->user();
+
+        $validate = $request->validate([
             'region_code' => [
                 'required',
                 'string',
@@ -24,13 +87,44 @@ class ProfileController extends Controller
             ],
         ]);
 
-        $user = $request->user();
-        $user->region_code = $validated['region_code'];
-        $user->save();
+        $user->update([
+            'region_code' => $validate['region_code']
+        ]);
 
         return response()->json([
-            'message' => 'Region berhasil disimpan',
-            'user' => $user,
+            'success' => true,
+            'message' => 'Region successfully updated',
+            'data' => $this->profileData($user)
+        ], 200);
+    }
+
+    public function updateAvatar(Request $request)
+    {
+        $user = $request->user();
+
+        $validate = $request->validate([
+            'photo' => 'required|image|mimes:jpg,jpeg,png|max:2048'
         ]);
+
+        $photoPath = $validate['photo']->store('users', 'public');
+
+        if ($user->photo && Storage::disk('public')->exists($user->photo)) {
+            Storage::disk('public')->delete($user->photo);
+        }
+
+        $user->update([
+            'photo' => $photoPath
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Profile photo successfully updated',
+            'data' => $this->profileData($user)
+        ], 200);
+    }
+
+    private function profileData(User $user)
+    {
+        return $user->fresh()->load('region')->loadCount(['perfumes', 'scentLogs']);
     }
 }

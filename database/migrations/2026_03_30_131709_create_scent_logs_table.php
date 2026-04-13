@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->foreignId('perfume_id')->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('occasion_id')->constrained()->cascadeOnUpdate();
-            $table->enum('environment', ['indoor', 'outdoor', 'all around']);
+            $table->enum('weather', ['Cerah', 'Berawan', 'Mendung', 'Hujan', 'Sejuk', 'Dingin']);
             $table->text('notes_review')->nullable();
             $table->timestamps();
         });

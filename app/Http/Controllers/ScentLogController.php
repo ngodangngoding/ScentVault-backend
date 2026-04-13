@@ -32,7 +32,7 @@ class ScentLogController extends Controller
         $validate = $request->validate([
             'perfume_id' => 'required|exists:perfumes,id',
             'occasion_id' => 'required|exists:occasions,id',
-            'environment' => ['required', Rule::in(ScentLog::ENVIRONMENT)],
+            'weather' => ['required', Rule::in(ScentLog::WEATHER)],
             'notes_review' => 'nullable|string',
         ]);
 
@@ -40,7 +40,7 @@ class ScentLogController extends Controller
             'perfume_id' => $validate['perfume_id'],
             'user_id' => auth()->id(),
             'occasion_id' => $validate['occasion_id'],
-            'environment' => $validate['environment'],
+            'weather' => $validate['weather'],
             'notes_review' => $validate['notes_review']
         ]);
 
@@ -80,7 +80,7 @@ class ScentLogController extends Controller
         $validate = $request->validate([
             'perfume_id' => 'required|exists:perfumes,id',
             'occasion_id' => 'required|exists:occasions,id',
-            'environment' => ['required', Rule::in(ScentLog::ENVIRONMENT)],
+            'weather' => ['required', Rule::in(ScentLog::WEATHER)],
             'notes_review' => 'nullable|string',
         ]);
 
@@ -97,7 +97,7 @@ class ScentLogController extends Controller
             'perfume_id' => $validate['perfume_id'],
             'user_id' => auth()->id(),
             'occasion_id' => $validate['occasion_id'],
-            'environment' => $validate['environment'],
+            'weather' => $validate['weather'],
             'notes_review' => $validate['notes_review']
         ]);
 

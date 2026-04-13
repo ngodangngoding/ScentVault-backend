@@ -24,7 +24,14 @@ class UserSeeder extends Seeder
             ]
         );
 
-        // Regular users
-        User::factory(10)->create(['role' => 'user']);
+        User::updateOrCreate(
+            ['email' => 'user@scentvault.com'],
+            [
+                'name' => 'User',
+                'password' => bcrypt('password'), // Silakan ganti nanti
+                'role' => 'user',
+            ]
+        );
+
     }
 }

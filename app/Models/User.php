@@ -11,14 +11,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 
-#[Fillable(['name', 'email', 'password', 'role', 'region_code'])]
+#[Fillable(['name', 'email', 'password', 'photo','role', 'region_code'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasApiTokens, HasFactory, Notifiable;
+
+    protected $appends = ['image_url'];
 
     /**
      * Get the attributes that should be cast.
@@ -59,5 +62,13 @@ class User extends Authenticatable
             ->withPivot('star_rating')
             ->withTimestamps();
     }
-}
 
+    public function getImageUrlAttribute()
+    {
+        if ($this->photo) {
+            return Storage::disk('public')->url($this->photo);
+        }
+
+        return null;
+    }
+}

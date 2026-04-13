@@ -215,6 +215,21 @@ Setelah server berjalan, buka:
 - `GET|POST|PUT|DELETE /api/scentLog`
 - `GET /api/recommendations/current`
 
+- `GET /api/pages/perfume-collection`
+
+#### Query Parameters:
+- `category_id: optional, ID kategori yang dipilih`
+- `page: optional, nomor halaman pagination`
+- `sort: optional, newest|oldest`
+- `per_page: optional, jumlah item per halaman`
+
+`Contoh:`
+- `/api/pages/perfume-collection`
+- `/api/pages/perfume-collection?category_id=2`
+- `/api/pages/perfume-collection?page=2`
+- `/api/pages/perfume-collection?category_id=2&page=2`
+
+
 ### Admin Only
 
 - `GET|POST|PUT|DELETE /api/users`

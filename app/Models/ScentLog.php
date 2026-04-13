@@ -6,13 +6,11 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['perfume_id', 'user_id', 'occasion_id', 'environment', 'notes_review'])]
+#[Fillable(['perfume_id', 'user_id', 'occasion_id', 'weather', 'notes_review'])]
 class ScentLog extends Model
 {
-    public const ENVIRONMENT = [
-        'indoor',
-        'outdoor',
-        'all around'
+    public const WEATHER = [
+        'Cerah', 'Berawan', 'Mendung', 'Hujan', 'Sejuk', 'Dingin'
     ];
 
     public function perfume(): BelongsTo
