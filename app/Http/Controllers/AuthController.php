@@ -59,7 +59,7 @@ class AuthController extends Controller
         ], 200);
     }
 
-    #[Group('User - Authentication', 'Endpoint autentikasi untuk user yang sudah login.', 2)]
+    #[Group('User - Authentication', 'Endpoint autentikasi untuk user yang sudah login.', 8)]
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
