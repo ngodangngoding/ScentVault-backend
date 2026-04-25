@@ -18,6 +18,7 @@ use App\Http\Controllers\ScentLogController;
 use App\Http\Controllers\RuleConfigController;
 use Illuminate\Support\Facades\Route;
 
+
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 

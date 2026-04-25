@@ -18,7 +18,6 @@ class DatabaseSeeder extends Seeder
             OccasionSeeder::class,
             UserSeeder::class,
             RuleConfigSeeder::class,
-            CategorySeeder::class
         ]);
 
     }

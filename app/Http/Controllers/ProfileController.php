@@ -14,7 +14,7 @@ class ProfileController extends Controller
 {
     public function show(Request $request)
     {
-        $user = $request->user()->load('region')->loadCount(['perfumes', 'scentLogs']);
+        $user = $request->user()->load('region.parent.parent.parent')->loadCount(['perfumes', 'scentLogs']);
 
         return response()->json([
             'success' => true,
@@ -127,6 +127,6 @@ class ProfileController extends Controller
 
     private function profileData(User $user)
     {
-        return $user->fresh()->load('region')->loadCount(['perfumes', 'scentLogs']);
+        return $user->fresh()->load('region.parent.parent.parent')->loadCount(['perfumes', 'scentLogs']);
     }
 }

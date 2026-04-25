@@ -17,6 +17,7 @@ class PerfumeCollectionPageController extends Controller
     {
         $validated = $request->validate([
             'category_id' => 'nullable|integer|exists:categories,id',
+            'search' => 'nullable|string|max:255',
             'sort' => ['nullable', Rule::in(['newest', 'oldest'])],
             'per_page' => 'nullable|integer|min:1|max:50',
             'page' => 'nullable|integer|min:1',
@@ -25,6 +26,7 @@ class PerfumeCollectionPageController extends Controller
         $user = $request->user();
 
         $categoryId = $validated['category_id'] ?? null;
+        $search = $validated['search'] ?? null;
         $sort = $validated['sort'] ?? 'newest';
         $perPage = $validated['per_page'] ?? 10;
 
@@ -37,6 +39,15 @@ class PerfumeCollectionPageController extends Controller
 
         if ($categoryId) {
             $perfumeQuery->where('perfumes.category_id', $categoryId);
+        }
+
+        if ($search) {
+            $perfumeQuery->where(function ($query) use ($search) {
+                $query->where('perfumes.name', 'like', '%' . $search . '%')
+                    ->orWhereHas('brand', function ($query) use ($search) {
+                        $query->where('name', 'like', '%' . $search . '%');
+                    });
+            });
         }
 
         if ($sort === 'oldest') {
@@ -95,6 +106,7 @@ class PerfumeCollectionPageController extends Controller
             'data' => [
                 'filters' => [
                     'category_id' => $categoryId,
+                    'search' => $search,
                     'sort' => $sort,
                     'per_page' => $perPage,
                 ],

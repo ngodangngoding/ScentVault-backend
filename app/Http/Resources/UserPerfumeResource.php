@@ -18,7 +18,7 @@ class UserPerfumeResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'brand_name' => $this->brand->name,
-            'category_name' => $this->category?->name,
+            'category_name' => $this->category->name,
             'concentration' => $this->concentration,
             'description' => $this->description,
             'image_url' => $this->image_url,

@@ -16,6 +16,18 @@ use Illuminate\Validation\Rule;
 #[Group('User - Perfumes', 'Endpoint untuk mengelola koleksi parfum milik user.', 4)]
 class PerfumeController extends Controller
 {
+
+    private function findOrCreateBrand(string $input): Brand
+    {
+        $brandName = trim($input);
+        $normalizedBrandName = strtolower($brandName);
+
+        return Brand::firstOrCreate(
+            ['normalized_name' => $normalizedBrandName],
+            ['name' => $brandName]
+        );
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -59,8 +71,7 @@ class PerfumeController extends Controller
         DB::beginTransaction();
 
         try {
-            $brandName = trim(ucwords(strtolower($validate['brand'])));
-            $brand = Brand::firstOrCreate(['name' => $brandName]);
+            $brand = $this->findOrCreateBrand($validate['brand']);
 
             $perfume = Perfume::create([
                 'name' => $validate['name'],
@@ -179,8 +190,7 @@ class PerfumeController extends Controller
         DB::beginTransaction();
 
         try {
-            $brandName = trim(ucwords(strtolower($validate['brand'])));
-            $brand = Brand::firstOrCreate(['name' => $brandName]);
+            $brand = $this->findOrCreateBrand($validate['brand']);
 
             $perfume->update([
                 'name' => $validate['name'],
