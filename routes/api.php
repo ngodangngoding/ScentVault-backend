@@ -24,8 +24,10 @@ Route::post('/login', [AuthController::class, 'login']);
 
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/pages/home', [HomePageController::class, 'show']);
-    Route::get('/pages/perfume-collection', [PerfumeCollectionPageController::class, 'show']);
+    Route::middleware('user')->group(function () {
+        Route::get('/pages/home', [HomePageController::class, 'show']);
+        Route::get('/pages/perfume-collection', [PerfumeCollectionPageController::class, 'show']);
+    });
 
     Route::apiResource('perfumes', PerfumeController::class);
     Route::put('/perfumes/{perfume}/suitability', [PerfumeSuitabilityController::class, 'update']);
