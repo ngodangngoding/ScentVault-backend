@@ -2,10 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminUserController;
-use App\Http\Controllers\BrandController;
-use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\IntegrationStatusController;
-use App\Http\Controllers\NoteController;
 use App\Http\Controllers\OccasionController;
 use App\Http\Controllers\Pages\HomePageController;
 use App\Http\Controllers\Pages\PerfumeCollectionPageController;
@@ -29,6 +26,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/pages/perfume-collection', [PerfumeCollectionPageController::class, 'show']);
     });
 
+    Route::get('/occasions', [OccasionController::class, 'index']);
     Route::apiResource('perfumes', PerfumeController::class);
     Route::put('/perfumes/{perfume}/suitability', [PerfumeSuitabilityController::class, 'update']);
     Route::get('perfumes/{perfume}/suitability', [PerfumeSuitabilityController::class, 'show']);
@@ -60,3 +58,4 @@ Route::prefix('region')->group(function () {
     Route::get('/districts', [RegionController::class, 'districts']);
     Route::get('/villages', [RegionController::class, 'villages']);
 });
+

@@ -19,7 +19,7 @@ class UserSeeder extends Seeder
             ['email' => 'admin@scentvault.com'],
             [
                 'name' => 'Administrator',
-                'password' => bcrypt('password'), // Silakan ganti nanti
+                'password' => bcrypt('password'),
                 'role' => 'admin',
             ]
         );
@@ -28,7 +28,7 @@ class UserSeeder extends Seeder
             ['email' => 'user@scentvault.com'],
             [
                 'name' => 'User',
-                'password' => bcrypt('password'), // Silakan ganti nanti
+                'password' => bcrypt('password'),
                 'role' => 'user',
             ]
         );

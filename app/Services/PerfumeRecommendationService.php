@@ -8,7 +8,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use RuntimeException;
 
-class PerfumeRecommendationService
+class  PerfumeRecommendationService
 {
     protected BmkgWeatherService $bmkgWeatherService;
 

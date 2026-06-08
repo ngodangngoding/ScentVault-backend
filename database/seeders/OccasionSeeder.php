@@ -15,12 +15,42 @@ class OccasionSeeder extends Seeder
     {
         DB::table('occasions')->insert([
             [
-                'name' => 'Work',
+                'name' => 'Aktivitas Harian',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'name' => 'Casual',
+                'name' => 'Kerja',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Acara Santai',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Kuliah',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Olahraga',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Aktivitas Luar Ruangan',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Acara Formal',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Acara Malam',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
